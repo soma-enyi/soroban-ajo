@@ -48,3 +48,21 @@ export interface WalletConnection {
   network: 'testnet' | 'mainnet'
   balance?: number
 }
+
+export interface TransactionFilters {
+  dateRange?: {
+    start: string
+    end: string
+  }
+  type?: 'contribution' | 'payout' | 'refund' | 'all'
+  member?: string
+  status?: 'pending' | 'confirmed' | 'failed' | 'all'
+}
+
+export type TransactionSortField = 'date' | 'amount' | 'member' | 'type'
+export type SortDirection = 'asc' | 'desc'
+
+export interface TransactionSort {
+  field: TransactionSortField
+  direction: SortDirection
+}
