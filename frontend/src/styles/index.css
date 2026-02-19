@@ -53,3 +53,58 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Card Component Variants */
+@layer components {
+  /* Base Card */
+  .card-base {
+    @apply bg-white rounded-lg transition-all duration-200;
+  }
+
+  /* Card Variants */
+  .card-default {
+    @apply card-base shadow-md hover:shadow-lg p-6;
+  }
+
+  .card-elevated {
+    @apply card-base shadow-lg hover:shadow-xl p-6;
+  }
+
+  .card-outlined {
+    @apply card-base border-2 border-gray-200 hover:border-gray-300 hover:shadow-md p-6;
+  }
+
+  .card-interactive {
+    @apply card-base shadow-md hover:shadow-xl hover:-translate-y-1 cursor-pointer p-6;
+  }
+
+  .card-compact {
+    @apply card-base shadow-md hover:shadow-lg p-4;
+  }
+
+  .card-spacious {
+    @apply card-base shadow-md hover:shadow-lg p-8;
+  }
+
+  /* Card Sections */
+  .card-header {
+    @apply mb-4 pb-4 border-b border-gray-100;
+  }
+
+  .card-body {
+    @apply space-y-3;
+  }
+
+  .card-footer {
+    @apply mt-4 pt-4 border-t border-gray-100;
+  }
+
+  /* Card States */
+  .card-hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-1;
+  }
+
+  .card-hover-glow {
+    @apply transition-shadow duration-200 hover:shadow-2xl hover:shadow-blue-100;
+  }
+}
