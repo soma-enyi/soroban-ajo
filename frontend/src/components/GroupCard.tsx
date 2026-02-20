@@ -1,30 +1,33 @@
 // Issue #22: Create group card component
 // Complexity: Trivial (100 pts)
 // Status: Enhanced with variants and consistent styling
+// TASK: Issue #62 Added Skeleton Loading State
 
 import React from 'react'
 
 interface GroupCardProps {
-  groupId: string
-  groupName: string
-  memberCount: number
-  maxMembers: number
-  nextPayout: string
-  totalContributions: number
-  status: 'active' | 'completed' | 'paused'
+  groupId?: string // Made optional for skeleton usage
+  groupName?: string
+  memberCount?: number
+  maxMembers?: number
+  nextPayout?: string
+  totalContributions?: number
+  status?: 'active' | 'completed' | 'paused'
   variant?: 'default' | 'elevated' | 'outlined' | 'interactive' | 'compact' | 'spacious'
   onClick?: () => void
+  isLoading?: boolean // <-- NEW: Prop to trigger loading state
 }
 
 export const GroupCard: React.FC<GroupCardProps> = ({
-  groupName,
-  memberCount,
-  maxMembers,
-  nextPayout,
-  totalContributions,
-  status,
+  groupName = '',
+  memberCount = 0,
+  maxMembers = 1,
+  nextPayout = '',
+  totalContributions = 0,
+  status = 'active',
   variant = 'interactive',
   onClick,
+  isLoading = false,
 }) => {
   const statusColors = {
     active: 'bg-green-100 text-green-800 border-green-200',
@@ -45,6 +48,45 @@ export const GroupCard: React.FC<GroupCardProps> = ({
   const isCompact = variant === 'compact'
   const isSpaciousOrElevated = variant === 'spacious' || variant === 'elevated'
 
+  // --- NEW: SKELETON LOADING STATE (#62) ---
+  if (isLoading) {
+    return (
+      <div className={`${cardClass} pointer-events-none`}>
+        {/* Header Skeleton */}
+        <div className={`flex justify-between items-start ${isCompact ? 'mb-3' : 'mb-4'}`}>
+          <div className={`skeleton rounded ${isCompact ? 'h-6 w-1/2' : isSpaciousOrElevated ? 'h-8 w-2/3' : 'h-7 w-1/2'}`}></div>
+          <div className="skeleton h-6 w-16 rounded-full"></div>
+        </div>
+
+        {/* Body Skeleton */}
+        <div className={`card-body ${isCompact ? 'space-y-2' : 'space-y-3'}`}>
+          <div className="flex justify-between items-center">
+            <div className="skeleton h-4 w-16 rounded"></div>
+            <div className="skeleton h-4 w-12 rounded"></div>
+          </div>
+
+          <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+            <div className="skeleton h-2 w-full rounded-full" />
+          </div>
+
+          <div className="flex justify-between items-center">
+            <div className="skeleton h-4 w-24 rounded"></div>
+            <div className="skeleton h-4 w-16 rounded"></div>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <div className="skeleton h-4 w-20 rounded"></div>
+            <div className="skeleton h-4 w-24 rounded"></div>
+          </div>
+        </div>
+
+        {/* Button Skeleton */}
+        <div className={`skeleton w-full rounded-lg ${isCompact ? 'mt-3 h-8' : 'mt-4 h-10'}`}></div>
+      </div>
+    )
+  }
+
+  // --- ORIGINAL RENDER STATE ---
   return (
     <div 
       className={cardClass}

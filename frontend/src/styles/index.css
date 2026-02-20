@@ -129,3 +129,46 @@ button:focus-visible {
     @apply transition-shadow duration-200 hover:shadow-2xl hover:shadow-blue-100;
   }
 }
+
+/* --- Issue #62: Loading Skeletons & Spinners --- */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: #f6f7f8;
+  background: linear-gradient(to right, #e2e8f0 8%, #cbd5e1 18%, #e2e8f0 33%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: 0.5rem;
+}
+
+/* Dark mode support for skeletons */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: #1e293b;
+    background: linear-gradient(to right, #1e293b 8%, #334155 18%, #1e293b 33%);
+    background-size: 1000px 100%;
+  }
+}
+
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #6366f1;
+  animation: spin 1s ease-in-out infinite;
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
