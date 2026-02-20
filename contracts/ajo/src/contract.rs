@@ -3,7 +3,7 @@ use soroban_sdk::{contract, contractimpl, Address, Env, Vec};
 use crate::errors::AjoError;
 use crate::events;
 use crate::storage;
-use crate::types::Group;
+use crate::types::{Group, GroupStatus};
 use crate::utils;
 
 /// The main Ajo contract
@@ -337,5 +337,70 @@ impl AjoContract {
     pub fn is_complete(env: Env, group_id: u64) -> Result<bool, AjoError> {
         let group = storage::get_group(&env, group_id).ok_or(AjoError::GroupNotFound)?;
         Ok(group.is_complete)
+    }
+    
+    /// Get comprehensive group status in a single call
+    ///
+    /// This function provides all key information about a group's current state,
+    /// eliminating the need for multiple separate calls. It returns:
+    /// - Current cycle number
+    /// - Next payout recipient (if not complete)
+    /// - Contribution progress (received vs total)
+    /// - List of members who haven't contributed yet
+    /// - Cycle timing information
+    /// - Whether the group is complete
+    ///
+    /// # Arguments
+    /// * `group_id` - The group to check
+    ///
+    /// # Returns
+    /// A GroupStatus struct containing comprehensive state information
+    ///
+    /// # Errors
+    /// * `GroupNotFound` - If the group does not exist
+    pub fn get_group_status(env: Env, group_id: u64) -> Result<GroupStatus, AjoError> {
+        let group = storage::get_group(&env, group_id).ok_or(AjoError::GroupNotFound)?;
+        
+        let current_time = utils::get_current_timestamp(&env);
+        let (cycle_start, cycle_end) = utils::get_cycle_window(&group, current_time);
+        let is_cycle_active = utils::is_within_cycle_window(&group, current_time);
+        
+        // Determine next recipient
+        let (next_recipient, has_next_recipient) = if group.is_complete {
+            // Use creator as placeholder when complete (client should check has_next_recipient)
+            (group.creator.clone(), false)
+        } else {
+            match group.members.get(group.payout_index) {
+                Some(addr) => (addr, true),
+                None => (group.creator.clone(), false),
+            }
+        };
+        
+        // Calculate contribution progress
+        let mut contributions_received = 0u32;
+        let mut pending_contributors = Vec::new(&env);
+        
+        for member in group.members.iter() {
+            if storage::has_contributed(&env, group_id, group.current_cycle, &member) {
+                contributions_received += 1;
+            } else {
+                pending_contributors.push_back(member);
+            }
+        }
+        
+        Ok(GroupStatus {
+            group_id,
+            current_cycle: group.current_cycle,
+            next_recipient,
+            has_next_recipient,
+            contributions_received,
+            total_members: group.members.len(),
+            pending_contributors,
+            is_complete: group.is_complete,
+            cycle_start_time: cycle_start,
+            cycle_end_time: cycle_end,
+            current_time,
+            is_cycle_active,
+        })
     }
 }

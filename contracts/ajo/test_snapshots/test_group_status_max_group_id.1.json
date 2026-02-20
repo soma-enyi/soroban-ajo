@@ -87,27 +87,11 @@
                 "bytes": "0000000000000000000000000000000000000000000000000000000000000001"
               },
               {
-                "symbol": "create_group"
+                "symbol": "get_group_status"
               }
             ],
             "data": {
-              "vec": [
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
-                },
-                {
-                  "i128": {
-                    "hi": -1,
-                    "lo": 18446744073709551116
-                  }
-                },
-                {
-                  "u64": 604800
-                },
-                {
-                  "u32": 10
-                }
-              ]
+              "u64": 18446744073709551615
             }
           }
         }
@@ -126,12 +110,12 @@
                 "symbol": "fn_return"
               },
               {
-                "symbol": "create_group"
+                "symbol": "get_group_status"
               }
             ],
             "data": {
               "error": {
-                "contract": 17
+                "contract": 1
               }
             }
           }
@@ -152,7 +136,7 @@
               },
               {
                 "error": {
-                  "contract": 17
+                  "contract": 1
                 }
               }
             ],
@@ -177,7 +161,7 @@
               },
               {
                 "error": {
-                  "contract": 17
+                  "contract": 1
                 }
               }
             ],
@@ -187,24 +171,12 @@
                   "string": "contract try_call failed"
                 },
                 {
-                  "symbol": "create_group"
+                  "symbol": "get_group_status"
                 },
                 {
                   "vec": [
                     {
-                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
-                    },
-                    {
-                      "i128": {
-                        "hi": -1,
-                        "lo": 18446744073709551116
-                      }
-                    },
-                    {
-                      "u64": 604800
-                    },
-                    {
-                      "u32": 10
+                      "u64": 18446744073709551615
                     }
                   ]
                 }

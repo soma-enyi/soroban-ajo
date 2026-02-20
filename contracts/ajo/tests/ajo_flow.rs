@@ -1,6 +1,7 @@
 #![cfg(test)]
 
 use soroban_sdk::{testutils::Address as _, Address, Env};
+use soroban_sdk::testutils::Ledger;
 use soroban_ajo::{AjoContract, AjoContractClient, AjoError};
 
 /// Helper function to create a test environment and contract

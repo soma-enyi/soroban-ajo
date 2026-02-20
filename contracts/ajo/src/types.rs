@@ -59,3 +59,45 @@ pub struct PayoutRecord {
     pub amount: i128,
     pub timestamp: u64,
 }
+
+/// Comprehensive group status returned by get_group_status
+/// Provides all key information in a single call to reduce client complexity
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GroupStatus {
+    /// The group ID
+    pub group_id: u64,
+    
+    /// Current cycle number
+    pub current_cycle: u32,
+    
+    /// Address of the next recipient (check has_next_recipient first)
+    pub next_recipient: Address,
+    
+    /// Whether there is a next recipient (false if group is complete)
+    pub has_next_recipient: bool,
+    
+    /// Number of members who have contributed this cycle
+    pub contributions_received: u32,
+    
+    /// Total number of members in the group
+    pub total_members: u32,
+    
+    /// List of members who haven't contributed yet this cycle
+    pub pending_contributors: Vec<Address>,
+    
+    /// Whether the group has completed all cycles
+    pub is_complete: bool,
+    
+    /// Timestamp when current cycle started
+    pub cycle_start_time: u64,
+    
+    /// Timestamp when current cycle ends
+    pub cycle_end_time: u64,
+    
+    /// Current timestamp for reference
+    pub current_time: u64,
+    
+    /// Whether the cycle window is still active
+    pub is_cycle_active: bool,
+}
