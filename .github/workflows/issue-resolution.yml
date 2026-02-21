@@ -15,9 +15,10 @@ jobs:
   # Track issue resolution in PRs
   track-resolution:
     name: Track Issue Resolution
-    if: github.event_name == 'pull_request'
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -171,9 +172,10 @@ jobs:
   # Validate issue closure
   validate-closure:
     name: Validate Issue Closure
-    if: github.event_name == 'issues' && github.event.action == 'closed'
+    if: >
+      github.event_name == 'issues' && 
+      github.event.action == 'closed'
     runs-on: ubuntu-latest
-
     steps:
       - name: Check if closed by PR
         uses: actions/github-script@v7
@@ -202,9 +204,12 @@ jobs:
   # Generate resolution metrics
   resolution-metrics:
     name: Resolution Metrics
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: >
+      github.event_name == 'pull_request' && 
+      github.event.action == 'closed' && 
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-
     steps:
       - name: Calculate Resolution Time
         uses: actions/github-script@v7
