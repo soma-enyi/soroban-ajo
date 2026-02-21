@@ -6,6 +6,11 @@ on:
   issues:
     types: [opened, edited, closed, reopened]
 
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
 jobs:
   # Track issue resolution in PRs
   track-resolution:
