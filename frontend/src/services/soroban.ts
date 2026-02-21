@@ -7,8 +7,8 @@ import { analytics, trackUserAction } from './analytics'
 import { showNotification } from '../utils/notifications'
 import { cacheService, CacheKeys, CacheTags } from './cache'
 
-const RPC_URL = import.meta.env.VITE_SOROBAN_RPC_URL
-const CONTRACT_ID = import.meta.env.VITE_SOROBAN_CONTRACT_ID
+const RPC_URL = process.env.NEXT_PUBLIC_SOROBAN_RPC_URL
+const CONTRACT_ID = process.env.NEXT_PUBLIC_SOROBAN_CONTRACT_ID
 
 // Cache TTL configurations (in milliseconds)
 const CACHE_TTL = {

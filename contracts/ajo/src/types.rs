@@ -36,6 +36,9 @@ pub struct Group {
     
     /// Whether the group has completed all cycles
     pub is_complete: bool,
+    
+    /// Whether the group was cancelled by its creator
+    pub is_cancelled: bool,
 }
 
 /// Contribution status for a specific member in a specific cycle

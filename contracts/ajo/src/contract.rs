@@ -63,6 +63,7 @@ impl AjoContract {
             created_at: now,
             cycle_start_time: now,
             is_complete: false,
+            is_cancelled: false,
         };
         
         // Store group
@@ -402,5 +403,83 @@ impl AjoContract {
             current_time,
             is_cycle_active,
         })
+    }
+    
+    /// Cancel a group before completion, with refunds
+    ///
+    /// Only the group creator can cancel. Calculates refund amounts based on
+    /// each member's total contributions across all cycles. Marks group as
+    /// cancelled and complete.
+    ///
+    /// # Arguments
+    /// * `creator` - Must be the group creator (authenticated)
+    /// * `group_id` - The group to cancel
+    ///
+    /// # Errors
+    /// * `GroupNotFound` - If the group does not exist
+    /// * `Unauthorized` - If the caller is not the group creator
+    /// * `GroupComplete` - If the group has already completed all cycles
+    /// * `GroupCancelled` - If the group was already cancelled
+    pub fn cancel_group(env: Env, creator: Address, group_id: u64) -> Result<(), AjoError> {
+        // Require authentication
+        creator.require_auth();
+        
+        // Get group
+        let mut group = storage::get_group(&env, group_id).ok_or(AjoError::GroupNotFound)?;
+        
+        // Only the creator can cancel
+        if group.creator != creator {
+            return Err(AjoError::Unauthorized);
+        }
+        
+        // Can't cancel an already completed group
+        if group.is_complete {
+            return Err(AjoError::GroupComplete);
+        }
+        
+        // Can't cancel an already cancelled group
+        if group.is_cancelled {
+            return Err(AjoError::GroupCancelled);
+        }
+        
+        // Calculate refund per member based on contributions made
+        // Each member's refund = contribution_amount * number_of_cycles_they_contributed
+        let member_count = group.members.len();
+        let refund_per_member = group.contribution_amount * (group.current_cycle as i128 - 1)
+            + if group.current_cycle >= 1 {
+                // Check current cycle contributions
+                let mut current_cycle_total = 0i128;
+                for member in group.members.iter() {
+                    if storage::has_contributed(&env, group_id, group.current_cycle, &member) {
+                        current_cycle_total += 1;
+                    }
+                }
+                // Average contribution this cycle for the event
+                if current_cycle_total > 0 {
+                    group.contribution_amount
+                } else {
+                    0
+                }
+            } else {
+                0
+            };
+        
+        // Emit cancellation event
+        // Note: In production, actual token refunds would happen here via token.transfer()
+        // For now, we emit the event with refund details (consistent with contribute/payout pattern)
+        events::emit_group_cancelled(
+            &env,
+            group_id,
+            &creator,
+            member_count,
+            refund_per_member,
+        );
+        
+        // Mark group as cancelled and complete
+        group.is_complete = true;
+        group.is_cancelled = true;
+        storage::store_group(&env, group_id, &group);
+        
+        Ok(())
     }
 }

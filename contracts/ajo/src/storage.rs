@@ -51,6 +51,12 @@ pub fn get_group(env: &Env, group_id: u64) -> Option<crate::types::Group> {
     env.storage().persistent().get(&key)
 }
 
+/// Remove a group from storage
+pub fn remove_group(env: &Env, group_id: u64) {
+    let key = (symbol_short!("GROUP"), group_id);
+    env.storage().persistent().remove(&key);
+}
+
 /// Store a contribution record
 pub fn store_contribution(env: &Env, group_id: u64, cycle: u32, member: &Address, paid: bool) {
     let key = (symbol_short!("CONTRIB"), group_id, cycle, member);

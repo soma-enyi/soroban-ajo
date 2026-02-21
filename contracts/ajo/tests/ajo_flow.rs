@@ -324,7 +324,6 @@ fn test_contribution_within_cycle_window() {
 }
 
 #[test]
-#[should_panic(expected = "OutsideCycleWindow")]
 fn test_contribution_after_cycle_ends() {
     let (env, client, creator, _, _) = setup_test_env();
     
@@ -334,12 +333,12 @@ fn test_contribution_after_cycle_ends() {
     // Advance time past cycle end
     env.ledger().with_mut(|li| li.timestamp += cycle_duration + 1);
     
-    // Try to contribute after cycle ends - should panic
-    client.contribute(&creator, &group_id);
+    // Try to contribute after cycle ends - should fail with OutsideCycleWindow
+    let result = client.try_contribute(&creator, &group_id);
+    assert_eq!(result, Err(Ok(AjoError::OutsideCycleWindow)));
 }
 
 #[test]
-#[should_panic(expected = "OutsideCycleWindow")]
 fn test_contribution_late() {
     let (env, client, creator, member2, member3) = setup_test_env();
     
@@ -351,8 +350,9 @@ fn test_contribution_late() {
     // Advance time beyond cycle duration
     env.ledger().with_mut(|li| li.timestamp += cycle_duration + 3600); // 1 day + 1 hour
     
-    // Late contribution should fail
-    client.contribute(&creator, &group_id);
+    // Late contribution should fail with OutsideCycleWindow
+    let result = client.try_contribute(&creator, &group_id);
+    assert_eq!(result, Err(Ok(AjoError::OutsideCycleWindow)));
 }
 
 #[test]

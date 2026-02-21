@@ -53,3 +53,15 @@ pub fn emit_cycle_advanced(env: &Env, group_id: u64, new_cycle: u32, cycle_start
     let topics = (symbol_short!("cycle"), group_id);
     env.events().publish(topics, (new_cycle, cycle_start_time));
 }
+
+/// Emit an event when a group is cancelled by its creator
+pub fn emit_group_cancelled(
+    env: &Env,
+    group_id: u64,
+    creator: &Address,
+    member_count: u32,
+    refund_per_member: i128,
+) {
+    let topics = (symbol_short!("cancel"), group_id);
+    env.events().publish(topics, (creator, member_count, refund_per_member));
+}

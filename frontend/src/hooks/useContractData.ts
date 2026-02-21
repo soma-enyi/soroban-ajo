@@ -15,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { initializeSoroban } from '../services/soroban'
 import { cacheService, CacheKeys, CacheTags } from '../services/cache'
 import { analytics } from '../services/analytics'
+import { Group } from '@/types'
 
 // Initialize Soroban service
 const sorobanService = initializeSoroban()
@@ -36,12 +37,12 @@ interface CacheOptions {
 /**
  * Fetch user's groups with intelligent caching
  */
-export const useGroups = (userId?: string, options: CacheOptions = {}) => {
+export const useGroups = (userId?: string, options: CacheOptions = {}): { data: Group[], isLoading: boolean, error: Error | null } => {
   const { useCache = true, bustCache = false } = options
 
   return useQuery({
     queryKey: ['groups', userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<Group[]> => {
       // Bust cache if requested
       if (bustCache && userId) {
         cacheService.invalidate(CacheKeys.userGroups(userId))
@@ -57,10 +58,7 @@ export const useGroups = (userId?: string, options: CacheOptions = {}) => {
     },
     ...DEFAULT_QUERY_OPTIONS,
     enabled: !!userId, // Only run if userId is provided
-    onError: (error: Error) => {
-      analytics.trackError(error, { operation: 'useGroups', userId }, 'medium')
-    },
-  })
+  }) as any
 }
 
 /**

@@ -3,7 +3,7 @@
 use soroban_sdk::{testutils::Address as _, Address, Env};
 use soroban_ajo::{AjoContract, AjoContractClient, AjoError};
 
-fn setup_test() -> (Env, AjoContractClient, Address) {
+fn setup_test() -> (Env, AjoContractClient<'static>, Address) {
     let env = Env::default();
     env.mock_all_auths();
     
