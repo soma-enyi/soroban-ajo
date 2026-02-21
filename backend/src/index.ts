@@ -7,6 +7,7 @@ import { errorHandler } from './middleware/errorHandler'
 import { groupsRouter } from './routes/groups'
 import { healthRouter } from './routes/health'
 import { webhooksRouter } from './routes/webhooks'
+import { authRouter } from './routes/auth'
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // Routes
 app.use('/health', healthRouter)
+app.use('/api/auth', authRouter)
 app.use('/api/groups', groupsRouter)
 app.use('/api/webhooks', webhooksRouter)
 
